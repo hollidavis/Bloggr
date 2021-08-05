@@ -1,10 +1,11 @@
 <template>
-  <div class="col-12 line mt-2 d-flex">
+  <div class="col-12 line mt-2 d-flex" data-toggle="modal" :data-target="'#blog-modal-' +blog.id ">
     <img class="smol mb-2" :src="blog.imgUrl" :alt="blog.title">
     <h1 class="d-flex align-items-center ml-3">
       {{ blog.title }}
     </h1>
   </div>
+  <BlogModal :blog="blog" />
 </template>
 
 <script>
@@ -18,8 +19,7 @@ export default {
   },
   setup() {
     return {}
-  },
-  components: {}
+  }
 }
 </script>
 
@@ -28,8 +28,8 @@ export default {
  border-bottom: 2px solid black
 }
 .smol{
-  height: 100px;
-  width: 100px;
+  height: 150px;
+  width: 150px;
   object-fit: cover;
 }
 </style>

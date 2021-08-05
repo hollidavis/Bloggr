@@ -8,6 +8,11 @@ class BlogsService {
     const res = await api.get('api/blogs' + convertToQuery(query))
     AppState.blogs = res.data
   }
+
+  async createBlog(newBlog) {
+    await api.post('api/blogs', newBlog)
+    await this.getAll()
+  }
 }
 
 export const blogsService = new BlogsService()

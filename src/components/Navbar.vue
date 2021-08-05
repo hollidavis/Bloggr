@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <router-link class="navbar-brand d-flex" :to="{ name: 'Home' }">
       <div class="d-flex flex-column align-items-center">
         <img
@@ -28,6 +28,9 @@
           </router-link>
         </li>
       </ul>
+      <div class="pr-5 action" data-toggle="modal" data-target="#create-blog">
+        <span>New Blog Post</span>
+      </div>
       <span class="navbar-text">
         <button
           class="btn btn-outline-primary text-uppercase"
@@ -71,16 +74,62 @@
       </span>
     </div>
   </nav>
+  <!-- Modal -->
+  <div class="modal fade"
+       id="create-blog"
+       tabindex="-1"
+       role="dialog"
+       aria-labelledby="modelTitleId"
+       aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            New Blog Post
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form @submit.prevent="createBlog">
+            <div class="form-group">
+              <input type="text" name="title" class="form-control" placeholder="Title..." v-model="state.newBlog.title">
+            </div>
+            <div class="form-group">
+              <input type="text" name="body" class="form-control" placeholder="Body..." v-model="state.newBlog.body">
+            </div>
+            <div class="form-group">
+              <input type="text" name="imgUrl" class="form-control" placeholder="Image Url..." v-model="state.newBlog.imgUrl">
+            </div>
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary mx-3">
+                Save
+              </button>
+              <button type="button" class="btn btn-secondary mx-3" data-dismiss="modal">
+                Close
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import { AuthService } from '../services/AuthService'
 import { AppState } from '../AppState'
 import { computed, reactive } from 'vue'
+import Pop from '../utils/Notifier'
+import { blogsService } from '../services/BlogsService'
 export default {
   setup() {
     const state = reactive({
-      dropOpen: false
+      dropOpen: false,
+      newBlog: {}
     })
     return {
       state,
@@ -90,6 +139,14 @@ export default {
       },
       async logout() {
         AuthService.logout({ returnTo: window.location.origin })
+      },
+      async createBlog() {
+        try {
+          await blogsService.createBlog(state.newBlog)
+          state.newBlog = {}
+        } catch (error) {
+          Pop.toast(error, 'error')
+        }
       }
     }
   }
